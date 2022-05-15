@@ -23,13 +23,12 @@ $(document).ready(function () {
             tr.append("<td>" + json[i].address + "</td>");
             tr.append("<td>" + json[i].capacity + "</td>");
             
-
             $('table').append(tr);
         }
     });
 });
 </script>
-        <a href="create.jsp">Create</a>
+        <a href="powerplants.jsp">Create</a>
 
 </head>
 <body>

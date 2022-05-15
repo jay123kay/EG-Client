@@ -12,7 +12,7 @@ $(document).on("click", "#btnSave", function(event) {
         $("#alertError").hide();
 
         // Form validation----------------
-        var status = validateItemForm();
+        var status = validatePowerPlantForm();
         // If not valid-------------------
         if (status != true) {
             $("#alertError").text(status);
@@ -20,13 +20,12 @@ $(document).on("click", "#btnSave", function(event) {
             return;
         }
         // If valid----------------------- 
-        // Generate the card and append
-        var type = ($("#hidItemIDSave").val() == "") ? "POST" : "PUT"; 
+       var type = ($("#hidPowerPlantIDSave").val() == "") ? "POST" : "PUT"; 
  $.ajax( 
  { 
- url : "http://localhost:8080/crud/webapi/powerplants/insertion", 
+ url : "PowerPlantsAPI", 
  type : type, 
- data : $("#formItem").serialize(), 
+ data : $("#formPowerPlant").serialize(), 
  dataType : "text", 
  complete : function(response, status) 
  { 
@@ -34,21 +33,61 @@ $(document).on("click", "#btnSave", function(event) {
  } 
  }); 
 });
+function onItemSaveComplete(response, status) 
+{ 
+if (status == "success") 
+ { 
+ var resultSet = JSON.parse(response); 
+ if (resultSet.status.trim() == "success") 
+ { 
+ $("#alertSuccess").text("Successfully saved."); 
+ $("#alertSuccess").show(); 
+ $("#divItemsGrid").html(resultSet.data); 
+ } else if (resultSet.status.trim() == "error") 
+ { 
+ $("#alertError").text(resultSet.data); 
+ $("#alertError").show(); 
+ } 
+ } else if (status == "error") 
+ { 
+ $("#alertError").text("Error while saving."); 
+ $("#alertError").show(); 
+ } else
+ { 
+ $("#alertError").text("Unknown error while saving.."); 
+ $("#alertError").show(); 
+ }
 
-         
+ }
+   // UPDATE==========================================
+$(document).on("click", ".btnUpdate", function(event) 
+{ 
+ $("#hidPowerPlantIDSave").val($(this).data("id"));
+ $("#name").val($(this).closest("tr").find('td:eq(1)').text()); 
+ $("#type").val($(this).closest("tr").find('td:eq(2)').text()); 
+ $("#address").val($(this).closest("tr").find('td:eq(3)').text()); 
+ $("#capacity").val($(this).closest("tr").find('td:eq(4)').text()); 
+
+});       
     
 // REMOVE==========================================
-$(document).on("click", ".remove", function(event) 
+$(document).on("click", ".btnRemove", function(event) 
 { 
- $(this).closest(".powerplant").remove(); 
- 
- $("#alertSuccess").text("Removed successfully."); 
- $("#alertSuccess").show(); 
-}); 
-
+ $.ajax( 
+ { 
+ url : "PowerPlantsAPI", 
+ type : "DELETE", 
+ data : "id=" + $(this).data("id"),
+ dataType : "text", 
+ complete : function(response, status) 
+ { 
+ onPowerPlantDeleteComplete(response.responseText, status); 
+ } 
+ }); 
+});
 // CLIENT-MODEL=================================================================
 
-    function validateItemForm() 
+    function validatePowerPlantForm() 
 {
 // ID
 if ($("#txtId").val().trim() == "") 
@@ -63,7 +102,7 @@ if ($("#txtName").val().trim() == "")
  // TYPE
 if ($("#txtType").val().trim() == "") 
  { 
- return "Insert power plant Type."; 
+ return "Insert power plant type."; 
  } 
 // ADDRESS
 if ($("#txtAddress").val().trim() == "") 
@@ -78,7 +117,7 @@ if ($("#txtCapacity").val().trim() == "")
 return true; 
 }
 
-function getPowerPlantCard(id, name, address) 
+/*function getPowerPlantCard(id, name, address) 
 { 
 
 var powerplant = ""; 
@@ -93,5 +132,5 @@ var powerplant = "";
  
 return powerplant; 
 }
-
+*/
 
